@@ -17,6 +17,16 @@ If this pattern matches, j should equal length of pattern at the end.
  * 
  * 
  *  */
+
+ class TrieNode {
+        Map<Character, TrieNode> children;
+        boolean endOfWord;
+        TrieNode() {
+            children = new HashMap<>();
+        }
+    }
+
+
 public class MatchCamelCase {
 	public List<Boolean> camelMatch(String[] queries, String pattern) {
 		List<Boolean> output = new ArrayList<>();
@@ -41,4 +51,31 @@ public class MatchCamelCase {
 		}
 		return output;
 	}
+
+	public List<Boolean> camelMatchTrie(String[] queries, String pattern) {
+        List<Boolean> results = new ArrayList<Boolean>();
+        TrieNode root = new TrieNode();
+        TrieNode origRoot = root;
+        for (int i = 0; i < pattern.length(); i++) {
+            TrieNode temp = new TrieNode();
+            root.children.put(pattern.charAt(i), temp);
+            root = temp;
+        }
+        root.endOfWord = true;
+        for (String query : queries) {
+            boolean flag = true;
+            TrieNode realRoot = origRoot;
+            for (int i = 0; i < query.length(); i++) {
+                int charCode = (int) query.charAt(i);
+                if (realRoot.children.get(query.charAt(i)) == null && charCode >= 65 && charCode <= 90) {
+                    flag = false; break;
+                }
+                if (realRoot.children.get(query.charAt(i)) != null) 
+                    realRoot = realRoot.children.get(query.charAt(i));
+            }
+            if (flag == true && realRoot.endOfWord == true) results.add(true);
+            else results.add(false);
+        }
+        return results;
+    }
 }
